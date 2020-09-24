@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      	xmlns:p="http://primefaces.org/ui">
+       
+
+<h:head></h:head> 
+<body> 
+<h:form id="form2">
+		<p:panel header="Listado de Reservaciones">
+			<p:dataTable value="#{beanCajero.listaReservacion}" var="r">
+				<p:column  headerText="id de reservacion" >
+					<h:outputText value="#{r.reservacionId}" />
+				</p:column>
+				<p:column  headerText="Nombre de cliente">
+					<h:outputText value="#{r.cliente.clienteId}" />
+				</p:column>
+				
+				<p:column   headerText="Total de tickets">
+					<h:outputText value="#{r.totalTickets}" />
+				</p:column>
+				<p:column  headerText="Costo total">
+					<h:outputText value="#{r.totalCosto}" />
+				</p:column>
+				<p:column   headerText="Cancelado">
+					<h:outputText value="#{r.cancelado}" />
+				</p:column>
+				<p:column   headerText="Registrado por Cajero">
+					<h:outputText value="#{r.cajeroId.id}" />
+				</p:column>
+				<p:column   headerText="Cancelar">
+				 <p:commandButton  value="CANCELAR" update="form2"
+                                        actionListener="#{beanCajero.actionListenerActualizarReservacion(r.reservacionId)}"></p:commandButton>
+                  </p:column>		
+
+			</p:dataTable>
+		</p:panel>
+
+	</h:form>
+</body> 
+</html>

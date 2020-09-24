@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<f:facet name="first">
+		<meta name="viewport"
+			content="width=device-with, initial-scale=1, shirnk-to-fit=no, user-scalable=no" />
+		<title>Listado de Funciones</title>
+	</f:facet>
+</h:head>
+
+
+<body>
+	<p:growl>
+		<p:autoUpdate />
+	</p:growl>
+
+
+	<h:form>
+		<p:messages>
+			<p:autoUpdate />
+		</p:messages>
+		<p:panel header="Registro nuevo multa">
+			<p:panelGrid columns="2">
+				<h:outputText value="FECHA DE FNCION" />
+				
+				<h:inputText   value="#{beanFuncion.funcion.fechahora}" />
+	            <h:outputText value="pelicula" />
+				
+				<p:selectOneMenu>
+					<f:selectItems id="a" value="#{beanFuncion.listaPeliculas}" var="p"
+						itemLabel="#{p.peliculaNombre}" itemValue="#{p.peliculaId}"></f:selectItems>
+				</p:selectOneMenu>
+				<h:outputText value="sala" />
+				<h:inputText value="#{beanFuncion.funcion.sala}" />
+
+
+
+				<p:commandButton value="Insertar" icon="fa fa-save"
+					actionListener="#{beanFuncion.actionListenerAgregar()}" />
+
+
+			</p:panelGrid>
+		</p:panel>
+	</h:form>
+	<h:form id="form2">
+
+		<p:panel header="Datos de funciones">
+			<p:dataTable value="#{beanFuncion.listaFunciones}" var="funcion"
+				reflow="true">
+				<p:column headerText="id Funcion">
+					<h:outputText value="#{funcion.funcionId}" />
+				</p:column>
+				<p:column headerText="Fecha">
+					<h:outputText value="#{funcion.fechahora}" />
+				</p:column>
+				<p:column headerText="id Pelicula">
+					<h:outputText value="#{funcion.pelicula.peliculaNombre}" />
+				</p:column>
+				<p:column headerText="numero de sala">
+					<h:outputText value="#{funcion.sala}" />
+				</p:column>
+
+			</p:dataTable>
+
+
+		</p:panel>
+	</h:form>
+
+</body>
+</html>

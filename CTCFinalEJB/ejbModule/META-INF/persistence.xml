@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+	<persistence-unit name="radiazaDS" transaction-type="JTA">
+		<jta-data-source>java:/radiazaDS</jta-data-source>
+		<class>ctc.model.entities.Cajero</class>
+		<class>ctc.model.entities.Cliente</class>
+		<class>ctc.model.entities.Funcion</class>
+		<class>ctc.model.entities.Logeo</class>
+		<class>ctc.model.entities.Pelicula</class>
+		<class>ctc.model.entities.Reservacion</class>
+		<class>ctc.model.entities.Ticket</class>
+	</persistence-unit>
+</persistence>

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"> 
+
+<h:head></h:head> 
+<body> 
+<p:growl>
+		<p:autoUpdate />
+	</p:growl>
+
+	<h:form id="form1">
+		<p:panel header="Registro de Peliculas">
+			<f:facet name="header">
+				<p:commandButton value="Nueva Pelicula" update="@form"
+					icon="fa fa-plus"></p:commandButton>
+			</f:facet>
+
+			<p:panelGrid columns="2">
+				<h:outputText value="Pelicula" />
+				<p:inputText value="#{beanPelicula.pelicula.peliculaNombre}"
+					requiredMessage="Es necesario un nombre" />
+				<h:outputText value="Director" />
+				<p:inputText value="#{beanPelicula.pelicula.director}" />
+				<h:outputText value="Sinopsis" />
+				<p:inputTextarea value="#{beanPelicula.pelicula.sinopsis}" />
+				<h:outputText value="Fecha de estreno" />
+				<p:datePicker id="popup" value="#{beanPelicula.pelicula.anio}" />
+
+				<p:commandButton value="Insertar"
+					actionListener="#{beanPelicula.actionListenerInsertarPelicula()}"
+					update="@form" icon="fa fa-save" />
+
+			</p:panelGrid>
+		</p:panel>
+	</h:form>
+	<p:panel>
+	</p:panel>
+
+	<h:form id="form2">
+		<p:panel header="Listado de Peliculas">
+			<p:dataTable value="#{beanPelicula.listaPeliculas}" var="pelis"
+				paginator="true" rows="5">
+				<p:column headerText="Id" visible="false">
+					<h:outputText value="#{pelis.peliculaId}" />
+				</p:column>
+				<p:column headerText="Nombre" filterBy="#{pelis.peliculaNombre}"
+					filterMatchMode="contains" priority="1">
+					<h:outputText value="#{pelis.peliculaNombre}" />
+				</p:column>
+				<p:column headerText="Director" filterBy="#{pelis.director}"
+					filterMatchMode="contains" priority="3">
+					<h:outputText value="#{pelis.director}" />
+				</p:column>
+				<p:column headerText="Año" filterBy="#{pelis.anio}"
+					filterMatchMode="contains" priority="2">
+					<h:outputText value="#{pelis.anio}" />
+				</p:column>
+				<p:column headerText="Sinopsis" priority="3">
+					<h:outputText value="#{pelis.sinopsis}" />
+				</p:column>
+
+				<p:column headerText="Opciones" priority="1">
+					<p:commandButton icon="fa fa-close" title="Eliminar" update="@form"
+						actionListener="#{beanPelicula.actionListenerEliminarPelicula(pelis.peliculaId)}">
+						<p:confirm header="Confirmacion" message="Desea Eliminar?"
+							icon="fa fa-exclamation-triangle"></p:confirm>
+					</p:commandButton>
+					<p:commandButton icon="fa fa-edit" title="Editar"
+						actionListener="#{beanPelicula.actionListenerSeleccionarPelicula(pelis)}"
+						update=":formEdicion" oncomplete="PF('dlgEdicion').show();">
+					</p:commandButton>
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+
+	</h:form>
+
+	<p:dialog header="Editar informacion" widgetVar="dlgEdicion"
+		modal="true">
+		<h:form id="formEdicion">
+			<p:growl>
+				<p:autoUpdate />
+			</p:growl>
+			<h:outputText value="#{beanPelicula.peliculaSeleccionado.peliculaId}"
+				visible="false" />
+			<p:panelGrid columns="2">
+				<h:outputText value="Nombre: " />
+				<p:inputText
+					value="#{beanPelicula.peliculaSeleccionado.peliculaNombre}" />
+				<h:outputText value="Director " />
+				<p:inputText value="#{beanPelicula.peliculaSeleccionado.director}" />
+				<h:outputText value="Sipnopsis " />
+				<p:inputText value="#{beanPelicula.peliculaSeleccionado.sinopsis}" />
+				<h:outputText value="Fecha de estreno" />
+				<p:datePicker id="popup"
+					value="#{beanPelicula.peliculaSeleccionado.anio}" />
+			</p:panelGrid>
+			<br></br>
+			<h:commandButton value="Actualizar" icon="fa fa-save"
+				update="@form,:form2"
+				actionListener="#{beanPelicula.actionListenerActualizarPelicula()}" />
+		</h:form>
+	</p:dialog>
+
+	<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+		<p:commandButton value="si" type="button"
+			styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+		<p:commandButton value="no" type="button"
+			styleClass="ui-confirmdialog-no" icon="fa fa-times" />
+	</p:confirmDialog>
+</body> 
+</html>
