@@ -7,6 +7,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import ctc.model.entities.Cajero;
 import ctc.model.entities.Cliente;
@@ -28,13 +29,37 @@ public class ManagerLogin {
 	public Cajero findCajeroByCedula(String cedula)
 	{
 		return em.createQuery("SELECT c FROM Cajero c"
-				+ " WHERE c.cedula='" + cedula + "'", Cajero.class).getResultList().get(0);
+				+ " WHERE c.cedula='" + cedula + "'", Cajero.class).getSingleResult();
+	}
+	
+	public void createCliente(Cliente c)
+	{
+		em.persist(c);
+		return;
+	}
+	
+	public boolean saltExistsCliente(String hash)
+	{
+		String consulta = "select count(*) from Cliente c where c.salt='" + hash + "'";
+		Query q = em.createQuery(consulta);
+		return (Integer.parseInt(q.getSingleResult().toString()) == 1);
+	}
+	
+	public int findPersona(String cedula)
+	{
+		String consulta1 = "select count(*) from Cliente c where c.clienteId='" + cedula + "'";
+		String consulta2 = "select count(*) from Cajero c where c.cedula='" + cedula + "'";
+		Query q1 = em.createQuery(consulta1);
+		if (Integer.parseInt(q1.getSingleResult().toString()) == 1) return 1;
+		Query q2 = em.createQuery(consulta2);
+		if (Integer.parseInt(q2.getSingleResult().toString()) == 1) return 2;
+		return 0;
 	}
 	
 	public Cliente findClienteByCedula(String cedula)
 	{
 		return em.createQuery("SELECT c FROM Cliente c"
-				+ " WHERE c.clienteId='" + cedula + "'", Cliente.class).getResultList().get(0);
+				+ " WHERE c.clienteId='" + cedula + "'", Cliente.class).getSingleResult();
 	}
 	
 	public List<Logeo> findLogeosFallidos(String id_usuario, char tipo_usuario)

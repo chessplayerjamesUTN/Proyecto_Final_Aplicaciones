@@ -50,15 +50,27 @@ public class ManagerCajero {
 		
 		}
 		
-	public void actualizarReservacion(Reservacion reservacion) throws Exception {
+	public void actualizarReservacion(Reservacion reservacion, Cajero c) throws Exception {
 		Reservacion r = findReservacionByCliente(reservacion.getReservacionId());
-        Cajero c= findCajerobyId(1);
 		if (r == null) {
 			throw new Exception("No existe pelicula con este Id");
 		}
 		r.setCancelado(true);
-		r.setCajeroId(c);		
+		r.setCajeroId(c);	
 		em.merge(r);
+	}
+	
+	public boolean saltExistsCliente(String hash)
+	{
+		String consulta = "select count(*) from Cajero c where c.salt='" + hash + "'";
+		Query q = em.createQuery(consulta);
+		return (Integer.parseInt(q.getSingleResult().toString()) == 1);
+	}
+	
+	public void CreateCajero(Cajero c)
+	{
+		em.persist(c);
+		return;
 	}
 	
 }

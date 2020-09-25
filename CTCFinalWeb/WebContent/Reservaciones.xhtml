@@ -1,39 +1,46 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui"> 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
 
-<h:head><title>Genere su Reservacion</title></h:head> 
-<body> 
-<p:menubar>
-      <f:facet name="options">
-            <p:commandButton value="cerar sesion" icon="fa fa-sign-out"
-                             action="#{beanFacturacion.actionCerrarSession()}"> </p:commandButton>
-                 
-      </f:facet>
-</p:menubar>
+<h:head>
+	<title>Genere su Reservacion</title>
+</h:head>
+<body>
+	<p:menubar>
+		<f:facet name="options">
+			<p:commandButton value="cerar sesion" icon="fa fa-sign-out"
+				action="#{beanFacturacion.actionCerrarSession()}">
+			</p:commandButton>
+
+		</f:facet>
+	</p:menubar>
 	<h1>Creacion de Reservacion</h1>
-	<h:form id="form">
+	<h:form id="form1">
 
 		<p:panel header="Datos de funciones">
 			<p:dataTable value="#{beanReservacion.listaFunciones}" var="funcion"
 				reflow="true" id="dataTable">
 				<p:column headerText="fecha" filterBy="#{funcion.fecha}">
-					
+
 					<h:outputText value="#{funcion.fecha}" />
 				</p:column>
-				<p:column headerText="Pelicula" filterBy="#{funcion.pelicula.peliculaNombre}" filterMatchMode="contains">
+				<p:column headerText="Pelicula"
+					filterBy="#{funcion.pelicula.peliculaNombre}"
+					filterMatchMode="contains">
 					<h:outputText value="#{funcion.pelicula.peliculaNombre}" />
 				</p:column>
 				<p:column headerText="hora">
 					<h:outputText value="#{funcion.hora}:00" />
 				</p:column>
 				<p:column>
-				
-				<p:commandButton icon="fa fa-save" title="Generar Reservacion" update="form3"
-						actionListener="#{beanReservacion.actionListenerCargarFuncion(funcion)}" onclick="PF('dialogo1').show();">
+
+					<p:commandButton icon="fa fa-save" title="Generar Reservacion"
+						update="form3"
+						actionListener="#{beanReservacion.actionListenerCargarFuncion(funcion)}"
+						onclick="PF('dialogo1').show();">
 					</p:commandButton>
 				</p:column>
 
@@ -42,40 +49,44 @@
 
 		</p:panel>
 	</h:form>
-	
-	<p:dialog  header="Generacion de Tickets"  widgetVar="dialogo1"
-                id="dialogo1"  modal="true"  height="275">
-                <h:form  id="form3">
-                          <p:messages  autoUpdate="true"></p:messages>
-                          <h2>Cuantos boletos desea generar?</h2>
-                        <p:panelGrid  columns="2">
-                                <h:outputText  value="Pelicula:"  />
-                                <h:outputText  value="#{beanReservacion.funcion.pelicula.peliculaNombre}"  />
-                                <h:outputText  value="Fecha:"  />
-                                <h:outputText  value="#{beanReservacion.funcion.fecha}"/>
-                                <h:outputText  value="Hora:"  />
-                                <h:outputText  value="#{beanReservacion.funcion.hora}"/>
-                                <h:outputText  value="Tickets:"  />
-                                <p:spinner value="#{beanReservacion.numTickets}" min="1" max="#{beanReservacion.maxAsientos}"></p:spinner>
-                                <p:commandButton  value="Generar"  update="form2:form1" onclick="PF('dialogo1').hide();"
-                                        actionListener="#{beanReservacion.actionListenerAgregar()}"></p:commandButton>
-                        </p:panelGrid>
-                </h:form>
-        </p:dialog>
+
+	<p:dialog header="Generacion de Tickets" widgetVar="dialogo1"
+		id="dialogo1" modal="true" height="275">
+		<h:form id="form3">
+			<p:messages autoUpdate="true"></p:messages>
+			<h2>Cuantos boletos desea generar?</h2>
+			<p:panelGrid columns="2">
+				<h:outputText value="Pelicula:" />
+				<h:outputText
+					value="#{beanReservacion.funcion.pelicula.peliculaNombre}" />
+				<h:outputText value="Fecha:" />
+				<h:outputText value="#{beanReservacion.funcion.fecha}" />
+				<h:outputText value="Hora:" />
+				<h:outputText value="#{beanReservacion.funcion.hora}" />
+				<h:outputText value="Tickets:" />
+				<p:spinner value="#{beanReservacion.numTickets}" min="1"
+					max="#{beanReservacion.maxAsientos}"></p:spinner>
+				<p:commandButton value="Generar" update="form2 form1"
+					onclick="PF('dialogo1').hide();"
+					actionListener="#{beanReservacion.actionListenerAgregar()}"></p:commandButton>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
 	<h:form id="form2">
 
 		<p:panel header="Tickets Reservados">
 			<p:dataTable value="#{beanReservacion.listaTickets}" var="ticket"
 				reflow="true" id="dataTable2">
 				<p:column headerText="#Ticket">
-					
+
 					<h:outputText value="#{ticket.ticketId}" />
 				</p:column>
 				<p:column headerText="Pelicula">
 					<h:outputText value="#{ticket.funcion.pelicula.peliculaNombre}" />
 				</p:column>
 				<p:column headerText="Fecha y hora">
-					<h:outputText value="#{ticket.funcion.fecha} #{ticket.funcion.hora}:00" />
+					<h:outputText
+						value="#{ticket.funcion.fecha} #{ticket.funcion.hora}:00" />
 				</p:column>
 				<p:column headerText="Sala">
 					<h:outputText value="#{ticket.funcion.sala}" />
@@ -86,5 +97,40 @@
 
 		</p:panel>
 	</h:form>
-</body> 
+
+
+	<!-- <h:form id="form4">
+		<p:panel header="Reservaciones generadas">
+			<p:dataTable value="#{beanReservacion.listaReservacionesCliente}"
+				var="reservacion" reflow="true" id="dataTable3">
+				<p:column headerText="#Reservacion">
+					<h:outputText value="#{reservacion.reservacionId}" />
+				</p:column>
+				<p:column headerText="Cancelada">
+					<h:outputText value="#{reservacion.cancelado}" />
+					<p:dataTable value="#{reservacion.tickets}" var="ticket"
+						reflow="true" id="datatable4">
+						<p:column headerText="#Ticket">
+							<h:outputText value="#{ticket.ticketId}" />
+						</p:column>
+						<p:column headerText="Pelicula">
+							<h:outputText value="#{ticket.funcion.pelicula.peliculaNombre}" />
+						</p:column>
+						<p:column headerText="Fecha y hora">
+							<h:outputText
+								value="#{ticket.funcion.fecha} #{ticket.funcion.hora}:00" />
+						</p:column>
+						<p:column headerText="Sala">
+							<h:outputText value="#{ticket.funcion.sala}" />
+						</p:column>
+					</p:dataTable>
+				</p:column>
+			</p:dataTable>
+
+
+		</p:panel>
+	</h:form> -->
+
+
+</body>
 </html>

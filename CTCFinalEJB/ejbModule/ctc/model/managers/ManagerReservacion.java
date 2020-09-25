@@ -105,6 +105,13 @@ public class ManagerReservacion {
 		return r;
 	}
 	
+	public List<Reservacion> findReservacionesByCedula(Cliente c)
+	{
+		String consulta = "select r from Reservacion r INNER JOIN Cliente c ON r.cliente.clienteId=c.clienteId WHERE c.clienteId='" + c.getClienteId() + "'";
+		Query q = em.createQuery(consulta, Reservacion.class);
+		return q.getResultList();
+	}
+	
 	public List<Ticket> findTicketsByReservacion(Reservacion r)
 	{
 //		return em.createQuery("SELECT t FROM Ticket t"

@@ -16,15 +16,11 @@ public class Cliente implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="cliente_id", unique=true, nullable=false, length=50)
 	private String clienteId;
 
 	@Column(nullable=false, length=50)
 	private String apellidos;
-
-	@Column(nullable=false)
-	private Integer id;
 
 	@Column(nullable=false, length=50)
 	private String nombres;
@@ -56,14 +52,6 @@ public class Cliente implements Serializable {
 
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
-	}
-
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
 	}
 
 	public String getNombres() {

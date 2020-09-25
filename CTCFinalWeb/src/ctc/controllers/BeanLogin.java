@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import ctc.logic.Validations;
 import ctc.model.entities.Cajero;
 import ctc.model.entities.Cliente;
 import ctc.model.managers.ManagerLogin;
@@ -54,7 +56,7 @@ public class BeanLogin implements Serializable {
 		//mLogin = new ManagerLogin();
 	}
     
-    private static String bytesToHex(byte[] hash)
+    public static String bytesToHex(byte[] hash)
     {
 	    StringBuffer hexString = new StringBuffer();
 	    for (int i = 0; i < hash.length; i++)
@@ -68,41 +70,53 @@ public class BeanLogin implements Serializable {
     
     public String actionClienteLogin()
     {
-    	tipousuario = "c";
-    	System.out.println("hola");
-    	System.out.println("got here");
-    	System.out.println(cedula);
-    	//System.out.println(cedula.length());
-    	cliente = mLogin.findClienteByCedula(cedula);
-    	System.out.println(cliente.getNombres());
-    	//System.out.println(cliente.getSalt());
-    	this.salt = cliente.getSalt();
+    	
+    	int codigo = mLogin.findPersona(cedula);
+    	System.out.println("got here 1");
+    	if (codigo == 1)
+    	{
+    		cliente = mLogin.findClienteByCedula(cedula);
+    		tipousuario = "c";
+    	}
+    	else if (codigo == 2)
+    	{
+    		cajero = mLogin.findCajeroByCedula(cedula);
+    		tipousuario = "a";
+    	}
+    	else
+    	{
+    		cliente = new Cliente();
+    		cliente.setClienteId(cedula);
+    		try {
+				FacesContext.getCurrentInstance().getExternalContext().redirect("/CTCFinalWeb/faces/crearCliente.xhtml");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "clientemenu";
+    	}
+    	if (codigo == 1) this.salt = cliente.getSalt();
+    	else this.salt = cajero.getSalt();
     		try
     		{
-    			System.out.println("got here");
     			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-    			//String salt = "937e8d5fbb48bd4949536cd65b8d35c426b80d2f830c5c308e2cdec422ae2244";
     			String superhashedpassword = password + salt + Pepper.PEPPERVALUE;
     			byte[] encodedhash = digest.digest(superhashedpassword.getBytes(StandardCharsets.UTF_8));
     			String hash = bytesToHex(encodedhash);
-    			//String pass = "6a3280d0390e3727717a45069668e7654dfd508216a300d2c15727538de5b1e6";
-
-    			
-    			exitoso = hash.equals(cliente.getPassword());
+    			if (codigo == 1) exitoso = hash.equals(cliente.getPassword());
+    			else exitoso = hash.contentEquals(cajero.getPassword());
     			//System.out.println(pass);
     			System.out.println(hash);
-    			mLogin.guardarLogeo(cedula, 'c', exitoso);
+    			mLogin.guardarLogeo(cedula, tipousuario.toCharArray()[0], exitoso);
     			if (exitoso)
     			{
     				System.out.println("Success");
     				System.out.println(hash);
-    				FacesContext.getCurrentInstance().getExternalContext().redirect("/CTCFinalWeb/faces/menuCliente.xhtml");
-
+    				String direccioncliente = "/CTCFinalWeb/faces/Reservaciones.xhtml";
+    				String direccioncajero = "/CTCFinalWeb/faces/CancelarReservacion.xhtml";
+    				if (codigo == 1)FacesContext.getCurrentInstance().getExternalContext().redirect(direccioncliente);
+    				else FacesContext.getCurrentInstance().getExternalContext().redirect(direccioncajero);
     				return "clientemenu";
-    				
-    			
-    				
-    				
     				
     			}
     			else
@@ -110,10 +124,6 @@ public class BeanLogin implements Serializable {
     				FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Contraseña incorrecta.",""));
     			}
     			return "";
-    		
-    			
-    			
-    			
     		}
     		catch (Exception e)
     		{
@@ -129,7 +139,30 @@ public class BeanLogin implements Serializable {
     }
     
    
-    
+    public void actionListenerNuevoCliente() throws NoSuchAlgorithmException, IOException
+    {
+    	if (!Validations.validadorDeCedula(cliente.getClienteId()))
+		{
+			FacesContext.getCurrentInstance().addMessage("", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Cedula incorrecta, digite de nuevo.",""));
+			return;
+		}
+    	
+    	MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    	String hash = "";
+    	do
+    	{
+	    	String saltvalue = Double.toString((Math.random() * 999999999));
+	    	byte[] encodedhash = digest.digest(saltvalue.getBytes(StandardCharsets.UTF_8));
+			hash = bytesToHex(encodedhash);
+    	} while (mLogin.saltExistsCliente(hash));
+    	cliente.setSalt(hash);
+    	String superpassword = password + hash + Pepper.PEPPERVALUE;
+    	byte[] encodedhash = digest.digest(superpassword.getBytes(StandardCharsets.UTF_8));
+		hash = bytesToHex(encodedhash);
+		cliente.setPassword(hash);
+		mLogin.createCliente(cliente);
+    	FacesContext.getCurrentInstance().getExternalContext().redirect("/CTCFinalWeb/faces/Reservaciones.xhtml");
+    }
     
     
 

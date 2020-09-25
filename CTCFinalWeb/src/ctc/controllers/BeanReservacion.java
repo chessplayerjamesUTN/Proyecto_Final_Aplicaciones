@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import ctc.model.entities.Cliente;
@@ -35,7 +36,6 @@ public class BeanReservacion implements Serializable {
 	 */
 
 	@EJB
-	
 	private ManagerReservacion managerReservacion;
 	private ManagerFuncion managerFuncion;
     private List<Funcion> listaFunciones;
@@ -43,6 +43,9 @@ public class BeanReservacion implements Serializable {
     private List<Reservacion> listaReservacionesCliente;
     private List<Ticket> listaTickets;
    
+    @Inject
+    private BeanLogin bl;
+    
     private Funcion funcion;
     private Pelicula pelicula;
     private Reservacion reservacion;
@@ -64,6 +67,11 @@ public class BeanReservacion implements Serializable {
 		//pelicula = new Pelicula();
 		numTickets = 1;
 		reservacion= new Reservacion();
+		cliente = bl.getCliente();
+		System.out.println(cliente.getClienteId());
+		listaReservacionesCliente = managerReservacion.findReservacionesByCedula(cliente);
+		System.out.println(listaReservacionesCliente.size());
+		System.out.println(listaReservacionesCliente.get(0).getTotalTickets());
 	}
     
     
@@ -141,10 +149,8 @@ public class BeanReservacion implements Serializable {
 
 	public void actionListenerAgregar() {
 		reservacion = new Reservacion();
-		Cliente c = new Cliente();
-		ManagerCliente mc = new ManagerCliente();
-		c = managerReservacion.findClienteByCedula("1751336155");
-		reservacion.setCliente(c);
+		cliente = bl.getCliente();
+		reservacion.setCliente(cliente);
 		reservacion.setTotalCosto(Integer.toString((numTickets * 3)));
 		reservacion.setTotalTickets((numTickets));
 		reservacion.setCancelado(false);
@@ -152,6 +158,7 @@ public class BeanReservacion implements Serializable {
 		managerReservacion.insertTickets(numTickets, funcion, reservacion);
 		listaTickets = managerReservacion.findTicketsByReservacion(reservacion);
 		listaFunciones = managerReservacion.findAllFunciones();
+		listaReservacionesCliente = managerReservacion.findReservacionesByCedula(cliente);
     }
 	
 	public void actionListenerCargarFuncion(Funcion f)
